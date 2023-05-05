@@ -22,7 +22,7 @@ def index():
     Returns:
         html: An html page. 
     """
-    return render_template('menu.html', menu=mode_manager.menu_config)
+    return render_template('index.html')
 
 
 @app.route("/run/<mode_name>", methods=['POST'])
@@ -42,15 +42,10 @@ def status_check():
     else:
         return jsonify({"status": "idle", f"battery_level":"{battery_level}"})
 
-@app.route("/stop", methods=['POST'])
-def stop():
+@app.route("/stop/<mode_name>", methods=['POST'])
+def stop(mode_name):
     # Turn off every system.
-    return jsonify({'message': "Stopped"})
-
-@app.route("/stop_process", methods=['POST'])
-def stop():
-    # Turn off every system.
-    mode_manager.stop()
+    mode_manager.stop(mode_name)
     return jsonify({'message': "Stopped"})
 
 
