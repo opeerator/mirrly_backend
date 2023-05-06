@@ -1,8 +1,13 @@
+import atexit
+import subprocess
 from flask import Flask, render_template, jsonify
 from mode_config import ModeManager
 
 app = Flask(__name__)
 mode_manager = ModeManager()
+
+# Status socket
+status_socket_p = subprocess.Popen(["python3", 'status_socket.py'])
 
 @app.after_request
 def add_header(response):
@@ -48,5 +53,13 @@ def stop(mode_name):
     mode_manager.stop(mode_name)
     return jsonify({'message': "Stopped"})
 
+def close_status_socket():
+    # Close the status_socket_p subprocess
+    status_socket_p.terminate()
 
-app.run(host="0.0.0.0")
+
+# Register the cleanup function to be called on server exit
+atexit.register(close_status_socket)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
