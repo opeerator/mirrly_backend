@@ -58,7 +58,7 @@ def status_check():
 # @app.route("/head/move/<component>/<gpos>", methods=['POST'])
 @socketio.on('move')
 def move_head_m(message):
-    res = HeadMotors.move(message['component'], message['gpos'])
+    res = head_motors.move(message['component'], message['gpos'])
     return jsonify({"status": f"{res}"})
 
 @app.route("/head/getinfo/<component>", methods=['POST'])

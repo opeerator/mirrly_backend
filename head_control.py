@@ -99,8 +99,10 @@ class HeadMotors(object):
         # A function to move the robot from server commands
 
         # Move Component
-        dxl_comm_result, dxl_error = None
-        dxl_comm_result_2, dxl_error_2 = None
+        dxl_comm_result = None
+        dxl_error = None
+        dxl_comm_result_2 = None
+        dxl_error_2 = None
         
         # Wait for last move
         while self.moving == True:
@@ -108,14 +110,14 @@ class HeadMotors(object):
         
         self.moving == True
         if component == "head_yaw":
-            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_1, ADDR_GOAL_POSITION, g_pos)
+            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_1, ADDR_GOAL_POSITION, int(g_pos))
         elif component == "head_pitch":
-            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_2, ADDR_GOAL_POSITION, g_pos)
+            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_2, ADDR_GOAL_POSITION, int(g_pos))
         elif component == "eye_brow":
-            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_POSITION, g_pos)
+            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_POSITION, int(g_pos))
             dxl_comm_result_2, dxl_error_2 = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_4, ADDR_GOAL_POSITION, g_pos)
         elif component == "eye_self":
-            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_5, ADDR_GOAL_POSITION, g_pos)
+            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_5, ADDR_GOAL_POSITION, int(g_pos))
         else:
             pass
         self.moving == False
