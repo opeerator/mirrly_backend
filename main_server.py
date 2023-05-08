@@ -47,15 +47,6 @@ def run(mode_name):
         response['redirect'] = True
     return jsonify(response)
 
-@app.route("/run/<mode_name>", methods=['POST'])
-def run(mode_name):
-    # Run different modes.
-    mode_manager.run(mode_name)
-    response = {'message': f'{mode_name} running'}
-    if mode_manager.should_redirect(mode_name):
-        response['redirect'] = True
-    return jsonify(response)
-
 @app.route("/status")
 def status_check():
     battery_level = 90 # Placeholder for battery status.
