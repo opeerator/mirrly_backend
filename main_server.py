@@ -55,9 +55,10 @@ def status_check():
     else:
         return jsonify({"status": "idle", f"battery_level":"{battery_level}"})
     
-@app.route("/head/move/<component>/<gpos>", methods=['POST'])
-def move_head_m(component, gpos):
-    res = HeadMotors.move(component, gpos)
+# @app.route("/head/move/<component>/<gpos>", methods=['POST'])
+@socketio.on('move')
+def move_head_m(message):
+    res = HeadMotors.move(message['component'], message['gpos'])
     return jsonify({"status": f"{res}"})
 
 @app.route("/head/getinfo/<component>", methods=['POST'])
