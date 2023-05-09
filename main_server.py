@@ -61,10 +61,12 @@ def move_head_m(message):
     res = head_motors.move(message['component'], message['gpos'])
     return jsonify({"status": f"{res}"})
 
-@app.route("/head/getinfo/<component>", methods=['POST'])
+# @app.route("/head/getinfo/<component>", methods=['POST'])
+@socketio.on('/head/getinfo/all')
 def head_info(component):
     res = HeadMotors.current_pos(component)
-    return jsonify({f"{component}": f"{res}"})
+    emit('info', {'data': res})
+    # return jsonify({f"{component}": f"{res}"})
 
 @app.route("/stop/<mode_name>", methods=['POST'])
 def stop(mode_name):
