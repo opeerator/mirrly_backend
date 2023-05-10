@@ -63,10 +63,9 @@ def move_head_m(message):
 
 # @app.route("/head/getinfo/<component>", methods=['POST'])
 @socketio.on('/head/getinfo/all')
-def head_info(component):
-    res = HeadMotors.current_pos(component)
+def head_info(data):
+    res = head_motors.current_pos(data['component'])
     emit('info', {'data': res})
-    # return jsonify({f"{component}": f"{res}"})
 
 @app.route("/stop/<mode_name>", methods=['POST'])
 def stop(mode_name):
