@@ -4,6 +4,7 @@ from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO, emit
 from mode_config import ModeManager
 from head_control import HeadMotors
+from foot_motors import FootMotors
 
 mode_manager = ModeManager()
 head_motors = HeadMotors()
@@ -12,6 +13,8 @@ current_move = None
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'somesecret'
 socketio = SocketIO(app)
+
+FootMotors()
 
 @socketio.event
 def test_connect():
