@@ -16,8 +16,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'somesecret'
 socketio = SocketIO(app)
 
-foot_motors.move("all", 255)
-time.sleep(15)
+foot_motors.move("forward", 20)
+time.sleep(5)
 foot_motors.release_motors("all")
 foot_motors.close()
 

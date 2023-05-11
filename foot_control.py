@@ -24,24 +24,29 @@ class FootMotors():
         self.speed1 = 255
         self.speed2 = 255
         
-    def move(self, motor, speed):
-        if motor == "all":
+    def move(self, direction, speed):
+        if direction == "forward":
             # Set speed
+            self.speed1 = int(speed)
+            self.speed2 = int(speed)
+      	    # Run Motors
+            self.motor1_pwm2.write(self.speed1) # Left
+            self.motor2_pwm3.write(1) # Right
+            self.motor1_pwm1.write(1) # Left Motor
+            self.motor2_pwm4.write(self.speed2) # Right motor
+        elif direction == "backward":
             if speed != self.speed1:
                 self.speed1 = int(speed)
-                self.speed2 = int(speed)
                 self.motor1_pwm2.write(self.speed1)
+            # Run the motors
+            self.motor1_pwm1.write(1)
+        elif direction == "rotate_left":
+            if speed != self.speed2:
+                self.speed2 = int(speed)
                 self.motor2_pwm3.write(self.speed2)
             # Run the motors
-            self.motor1_pwm1.write(1)
             self.motor2_pwm4.write(1)
-        elif motor == "m_1":
-            if speed != self.speed1:
-                self.speed1 = int(speed)
-                self.motor1_pwm2.write(self.speed1)
-            # Run the motors
-            self.motor1_pwm1.write(1)
-        elif motor == "m_2":
+        elif direction == "rotate_right":
             if speed != self.speed2:
                 self.speed2 = int(speed)
                 self.motor2_pwm3.write(self.speed2)
