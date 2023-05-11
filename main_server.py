@@ -4,17 +4,18 @@ from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO, emit
 from mode_config import ModeManager
 from head_control import HeadMotors
-from foot_motors import FootMotors
+from foot_control import FootMotors
 
 mode_manager = ModeManager()
 head_motors = HeadMotors()
+foot_motors = FootMotors()
 current_move = None
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'somesecret'
 socketio = SocketIO(app)
 
-FootMotors()
+foot_motors.move("all", 100)
 
 @socketio.event
 def test_connect():
@@ -79,3 +80,4 @@ def stop(mode_name):
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0')
     head_motors.close()
+    foot_motors.close()
