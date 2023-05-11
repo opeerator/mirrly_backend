@@ -12,13 +12,13 @@ class FootMotors():
         self.PWM4 = 13
 
         # Connect to the Arduino
-        self.board = pyfirmata.Arduino('/dev/ttyACM1')  # Update the port if necessary
+        self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
 
         # Configure the pins
         self.motor1_pwm1 = self.board.get_pin(f'd:{self.PWM1}:o')
-        self.motor1_pwm2 = self.board.get_pin(f'd:{self.PWM2}:p')
-        self.motor2_pwm3 = self.board.get_pin(f'd:{self.PWM3}:o')
-        self.motor2_pwm4 = self.board.get_pin(f'd:{self.PWM4}:p')
+        self.motor1_pwm2 = self.board.get_pin(f'd:{self.PWM2}:p') # 0-255
+        self.motor2_pwm3 = self.board.get_pin(f'd:{self.PWM3}:p') # 0-255
+        self.motor2_pwm4 = self.board.get_pin(f'd:{self.PWM4}:o')
 
         # Set the initial motor speeds
         self.speed1 = 255
@@ -31,10 +31,10 @@ class FootMotors():
                 self.speed1 = int(speed)
                 self.speed2 = int(speed)
                 self.motor1_pwm2.write(self.speed1)
-                self.motor2_pwm4.write(self.speed2)
+                self.motor2_pwm3.write(self.speed2)
             # Run the motors
             self.motor1_pwm1.write(1)
-            self.motor2_pwm3.write(1)
+            self.motor2_pwm4.write(1)
         elif motor == "m_1":
             if speed != self.speed1:
                 self.speed1 = int(speed)
@@ -44,9 +44,9 @@ class FootMotors():
         elif motor == "m_2":
             if speed != self.speed2:
                 self.speed2 = int(speed)
-                self.motor2_pwm4.write(self.speed2)
+                self.motor2_pwm3.write(self.speed2)
             # Run the motors
-            self.motor1_pwm1.write(1)
+            self.motor2_pwm4.write(1)
     
     def release_motors(self, motor):
         if motor == 'all':
@@ -59,7 +59,7 @@ class FootMotors():
             if motor == "m_1":
                 self.motor1_pwm1.write(0)
             elif motor == "m_2":
-                self.motor2_pwm3.write(0)
+                self.motor2_pwm4.write(0)
             else:
                 pass
 

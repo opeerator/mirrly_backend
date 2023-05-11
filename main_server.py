@@ -1,3 +1,4 @@
+import time
 import atexit
 import subprocess
 from flask import Flask, render_template, jsonify
@@ -15,7 +16,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'somesecret'
 socketio = SocketIO(app)
 
-foot_motors.move("all", 100)
+foot_motors.move("all", 255)
+time.sleep(15)
+foot_motors.release_motors("all")
+foot_motors.close()
 
 @socketio.event
 def test_connect():
