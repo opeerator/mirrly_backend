@@ -6,10 +6,10 @@ class FootMotors():
 
     def __init__(self):
         # Define the pins used by the motor driver
-        self.PWM1 = 9
-        self.PWM2 = 10
-        self.PWM3 = 11
-        self.PWM4 = 5
+        self.PWM1 = 6
+        self.PWM2 = 11
+        self.PWM3 = 10
+        self.PWM4 = 9
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
@@ -32,8 +32,8 @@ class FootMotors():
                 self.speed2 = int(speed)
             # Run the motors
             self.M1A.write(0)
-            self.M1B.write(self.speed2/255)
-            self.M2A.write(0)
+            self.M1B.write(self.speed1/255)
+            self.M2A.write(self.speed2/255)
             self.M2B.write(0)
         elif motor == "backward":
             # Set speed
@@ -41,11 +41,20 @@ class FootMotors():
                 self.speed1 = int(speed)
                 self.speed2 = int(speed)
             # Run the motors
+            self.M1A.write(self.speed1/255)
+            self.M1B.write(0)
+            self.M2A.write(0)
+            self.M2B.write(self.speed2/255)
+        elif motor == "rotate_right":
+            # Set speed
+            if speed != self.speed1:
+                self.speed1 = int(speed)
+                self.speed2 = int(speed)
+            # Run the motors
             self.M1A.write(0)
-            self.M1B.write(self.speed2/255)
-            self.M2A.write(self.speed2/255)
+            self.M1B.write(0)
+            self.M2A.write(self.speed1/255)
             self.M2B.write(0)
-                
         elif motor == "rotate_left":
             # Set speed
             if speed != self.speed1:
@@ -53,19 +62,29 @@ class FootMotors():
                 self.speed2 = int(speed)
             # Run the motors
             self.M1A.write(0)
-            self.M1B.write(1)
+            self.M1B.write(self.speed1/255)
             self.M2A.write(0)
-            self.M2B.write(1)
-        elif motor == "rotate_right":
+            self.M2B.write(0) 
+        elif motor == "rotate_left_b":
             # Set speed
             if speed != self.speed1:
                 self.speed1 = int(speed)
                 self.speed2 = int(speed)
             # Run the motors
-            self.M1A.write(1)
+            self.M1A.write(0)
             self.M1B.write(0)
-            self.M2A.write(1)
-            self.M2B.write(0)  
+            self.M2A.write(0)
+            self.M2B.write(self.speed1/255)
+        elif motor == "rotate_right_b":
+            # Set speed
+            if speed != self.speed1:
+                self.speed1 = int(speed)
+                self.speed2 = int(speed)
+            # Run the motors
+            self.M1A.write(self.speed1/255)
+            self.M1B.write(0)
+            self.M2A.write(0)
+            self.M2B.write(0)   
     def release_motors(self, motor):
         if motor == 'all':
             # Release the motors
@@ -77,19 +96,3 @@ class FootMotors():
     def close(self):
         # Disconnect from the Arduino
         self.board.exit()
-        
-if __name__ == "__main__":
-    m = FootMotors()
-    m.move("forward", 100)
-    time.sleep(2)
-    m.release_motors("all")
-    # m.move("backward", 50)
-    # time.sleep(2)
-    # m.release_motors("all")
-    # m.move("rotate_left", 50)
-    # time.sleep(2)
-    # m.release_motors("all")
-    # m.move("rotate_right", 50)
-    # time.sleep(2)
-    # m.release_motors("all")
-    m.close()

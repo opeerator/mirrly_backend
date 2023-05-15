@@ -16,11 +16,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'somesecret'
 socketio = SocketIO(app)
 
-foot_motors.move("forward", 20)
-time.sleep(5)
-foot_motors.release_motors("all")
-foot_motors.close()
-
 @socketio.event
 def test_connect():
     print("Connected to mirrly")
@@ -64,9 +59,17 @@ def status_check():
         return jsonify({"status": "idle", f"battery_level":"{battery_level}"})
     
 # @app.route("/head/move/<component>/<gpos>", methods=['POST'])
-@socketio.on('move')
+@socketio.on('move/head')
 def move_head_m(message):
     res = head_motors.move(message['component'], message['gpos'])
+    return jsonify({"status": f"{res}"})
+    
+@socketio.on('move/body')
+def body_movement(message):
+        if message['direction'] == 'stop':
+                res = foot_motors.release_motors(message['direction'], 'all')
+        else:
+                res = foot_motors.move(message['direction'], message['speed'])
     return jsonify({"status": f"{res}"})
 
 # @app.route("/head/getinfo/<component>", methods=['POST'])
@@ -85,3 +88,4 @@ if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0')
     head_motors.close()
     foot_motors.close()
+
