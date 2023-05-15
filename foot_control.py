@@ -9,66 +9,87 @@ class FootMotors():
         self.PWM1 = 9
         self.PWM2 = 10
         self.PWM3 = 11
-        self.PWM4 = 13
+        self.PWM4 = 5
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
 
         # Configure the pins
-        self.motor1_pwm1 = self.board.get_pin(f'd:{self.PWM1}:o')
-        self.motor1_pwm2 = self.board.get_pin(f'd:{self.PWM2}:p') # 0-255
-        self.motor2_pwm3 = self.board.get_pin(f'd:{self.PWM3}:p') # 0-255
-        self.motor2_pwm4 = self.board.get_pin(f'd:{self.PWM4}:o')
+        self.M1A = self.board.get_pin(f'd:{self.PWM1}:p')
+        self.M1B = self.board.get_pin(f'd:{self.PWM2}:p')
+        self.M2A = self.board.get_pin(f'd:{self.PWM3}:p') 
+        self.M2B = self.board.get_pin(f'd:{self.PWM4}:p')
 
         # Set the initial motor speeds
         self.speed1 = 255
         self.speed2 = 255
         
-    def move(self, direction, speed):
-        if direction == "forward":
+    def move(self, motor, speed):
+        if motor == "forward":
             # Set speed
-            self.speed1 = int(speed)
-            self.speed2 = int(speed)
-      	    # Run Motors
-            self.motor1_pwm2.write(self.speed1) # Left
-            self.motor2_pwm3.write(1) # Right
-            self.motor1_pwm1.write(1) # Left Motor
-            self.motor2_pwm4.write(self.speed2) # Right motor
-        elif direction == "backward":
             if speed != self.speed1:
                 self.speed1 = int(speed)
-                self.motor1_pwm2.write(self.speed1)
-            # Run the motors
-            self.motor1_pwm1.write(1)
-        elif direction == "rotate_left":
-            if speed != self.speed2:
                 self.speed2 = int(speed)
-                self.motor2_pwm3.write(self.speed2)
             # Run the motors
-            self.motor2_pwm4.write(1)
-        elif direction == "rotate_right":
-            if speed != self.speed2:
+            self.M1A.write(0)
+            self.M1B.write(self.speed2/255)
+            self.M2A.write(0)
+            self.M2B.write(0)
+        elif motor == "backward":
+            # Set speed
+            if speed != self.speed1:
+                self.speed1 = int(speed)
                 self.speed2 = int(speed)
-                self.motor2_pwm3.write(self.speed2)
             # Run the motors
-            self.motor2_pwm4.write(1)
-    
+            self.M1A.write(0)
+            self.M1B.write(self.speed2/255)
+            self.M2A.write(self.speed2/255)
+            self.M2B.write(0)
+                
+        elif motor == "rotate_left":
+            # Set speed
+            if speed != self.speed1:
+                self.speed1 = int(speed)
+                self.speed2 = int(speed)
+            # Run the motors
+            self.M1A.write(0)
+            self.M1B.write(1)
+            self.M2A.write(0)
+            self.M2B.write(1)
+        elif motor == "rotate_right":
+            # Set speed
+            if speed != self.speed1:
+                self.speed1 = int(speed)
+                self.speed2 = int(speed)
+            # Run the motors
+            self.M1A.write(1)
+            self.M1B.write(0)
+            self.M2A.write(1)
+            self.M2B.write(0)  
     def release_motors(self, motor):
         if motor == 'all':
             # Release the motors
-            self.motor1_pwm1.write(0)
-            self.motor1_pwm2.write(0)
-            self.motor2_pwm3.write(0)
-            self.motor2_pwm4.write(0)
-        else:
-            if motor == "m_1":
-                self.motor1_pwm1.write(0)
-            elif motor == "m_2":
-                self.motor2_pwm4.write(0)
-            else:
-                pass
+            self.M1A.write(0)
+            self.M1B.write(0)
+            self.M2A.write(0)
+            self.M2B.write(0)
 
     def close(self):
         # Disconnect from the Arduino
         self.board.exit()
         
+if __name__ == "__main__":
+    m = FootMotors()
+    m.move("forward", 100)
+    time.sleep(2)
+    m.release_motors("all")
+    # m.move("backward", 50)
+    # time.sleep(2)
+    # m.release_motors("all")
+    # m.move("rotate_left", 50)
+    # time.sleep(2)
+    # m.release_motors("all")
+    # m.move("rotate_right", 50)
+    # time.sleep(2)
+    # m.release_motors("all")
+    m.close()
