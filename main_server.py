@@ -66,10 +66,10 @@ def move_head_m(message):
     
 @socketio.on('move/body')
 def body_movement(message):
-        if message['direction'] == 'stop':
-                res = foot_motors.release_motors(message['direction'], 'all')
-        else:
-                res = foot_motors.move(message['direction'], message['speed'])
+    if message['direction'] == 'stop':
+        res = foot_motors.release_motors(message['direction'], 'all')
+    else:
+        res = foot_motors.move(message['direction'], message['speed'])
     return jsonify({"status": f"{res}"})
 
 # @app.route("/head/getinfo/<component>", methods=['POST'])
@@ -88,4 +88,5 @@ if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0')
     head_motors.close()
     foot_motors.close()
+
 
