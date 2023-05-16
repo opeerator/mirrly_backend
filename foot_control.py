@@ -25,6 +25,17 @@ class FootMotors():
         self.speed2 = 255
         
     def move(self, motor, speed):
+        if motor == "live":
+            if speed['x'] > 0:
+                if speed['y'] < 0:
+                    self.M2A.write(speed['x']/255)
+                else:
+                    self.M1A.write(speed['x']/255)
+            else:
+                if speed['y'] < 0:
+                    self.M1B.write(speed['x']/255)
+                else:
+                    self.M2B.write(speed['x']/255)
         if motor == "forward":
             # Set speed
             if speed != self.speed1:
