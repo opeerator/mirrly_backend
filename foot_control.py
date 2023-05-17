@@ -26,16 +26,60 @@ class FootMotors():
         
     def move(self, motor, speed):
         if motor == "live":
-            if speed['x'] > 0:
-                if speed['y'] < 0:
-                    self.M2A.write(speed['x']/255)
+            print(speed)
+            if int(speed['x']) < 80 and int(speed['x']) > -80:
+                if(speed['y']) > 0:
+                    print("backward")
+                    self.M1A.write(float(speed['y'])/255)
+                    self.M1B.write(0)
+                    self.M2A.write(0)
+                    self.M2B.write(float(speed['y'])/255)
                 else:
-                    self.M1A.write(speed['x']/255)
+                    print("forward")
+                    self.M1A.write(0)
+                    self.M1B.write(float(-speed['y'])/255)
+                    self.M2A.write(float(-speed['y'])/255)
+                    self.M2B.write(0)
+            elif int(speed['y']) < 80 and int(speed['y']) > -80:
+                if(speed['x']) > 0:
+                    print("right")
+                    self.M1A.write(0)
+                    self.M1B.write(0)
+                    self.M2A.write(float(speed['x'])/255)
+                    self.M2B.write(0)
+                else:
+                    print("left")
+                    self.M1A.write(0)
+                    self.M1B.write(-float(speed['x'])/255)
+                    self.M2A.write(0)
+                    self.M2B.write(0)
             else:
-                if speed['y'] < 0:
-                    self.M1B.write(speed['x']/255)
-                else:
-                    self.M2B.write(speed['x']/255)
+                    if int(speed['x']) > 0:
+                        if int(speed['y']) < 0:
+                            print("top-right")
+                            self.M1B.write(0)
+                            self.M2B.write(0)
+                            self.M1A.write(-float(speed['y'])/255)
+                            self.M2A.write(float(speed['x'])/255)
+                        else:
+                            print("back-right")
+                            self.M2A.write(0)
+                            self.M2B.write(0)
+                            self.M1A.write(float(speed['y'])/255)
+                            self.M2A.write(float(speed['x'])/255)
+                    else:
+                        if int(speed['y']) < 0:
+                            print("top-left")
+                            self.M1A.write(0)
+                            self.M2A.write(0)
+                            self.M2B.write(-float(speed['y'])/255)
+                            self.M1B.write(-float(speed['x'])/255)
+                        else:
+                            print("back-left")
+                            self.M1A.write(0)
+                            self.M2A.write(0)
+                            self.M1B.write(float(speed['y'])/255)
+                            self.M2B.write(-float(speed['x'])/255)
         if motor == "forward":
             # Set speed
             if speed != self.speed1:
@@ -97,13 +141,15 @@ class FootMotors():
             self.M2A.write(0)
             self.M2B.write(0)   
     def release_motors(self, motor):
-        if motor == 'all':
-            # Release the motors
-            self.M1A.write(0)
-            self.M1B.write(0)
-            self.M2A.write(0)
-            self.M2B.write(0)
+        # Release the motors
+        time.sleep(0.1) # Should be considered or it will be not work consistent
+        self.M1A.write(0)
+        self.M1B.write(0)
+        self.M2A.write(0)
+        self.M2B.write(0)
+        print("release")
 
     def close(self):
         # Disconnect from the Arduino
         self.board.exit()
+

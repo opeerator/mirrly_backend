@@ -67,7 +67,7 @@ def move_head_m(message):
 @socketio.on('move/body')
 def body_movement(message):
     if message['direction'] == 'stop':
-        res = foot_motors.release_motors(message['direction'], 'all')
+        res = foot_motors.release_motors(message['direction'])
     else:
         res = foot_motors.move(message['direction'], message['speed'])
     return jsonify({"status": f"{res}"})
