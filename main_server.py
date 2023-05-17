@@ -5,11 +5,11 @@ from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO, emit
 from mode_config import ModeManager
 from head_control import HeadMotors
-from foot_control import FootMotors
+from torso_control import TorsoMotors
 
 mode_manager = ModeManager()
 head_motors = HeadMotors()
-foot_motors = FootMotors()
+torso_motors = TorsoMotors()
 current_move = None
 
 app = Flask(__name__)
@@ -67,9 +67,14 @@ def move_head_m(message):
 @socketio.on('move/body')
 def body_movement(message):
     if message['direction'] == 'stop':
-        res = foot_motors.release_motors(message['direction'])
+        res = torso_motors.release_motors(message['direction'])
     else:
-        res = foot_motors.move(message['direction'], message['speed'])
+        res = torso_motors.move(message['direction'], message['speed'])
+    return jsonify({"status": f"{res}"})
+
+@socketio.on('move/hand')
+def body_movement(message):
+    res = torso_motors.arm_move(message['comp'], message['angle'])
     return jsonify({"status": f"{res}"})
 
 # @app.route("/head/getinfo/<component>", methods=['POST'])
@@ -87,6 +92,6 @@ def stop(mode_name):
 if __name__ == "__main__":
     socketio.run(app, host='0.0.0.0')
     head_motors.close()
-    foot_motors.close()
+    torso_motors.close()
 
 

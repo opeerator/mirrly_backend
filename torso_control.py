@@ -1,7 +1,7 @@
 import time
 import pyfirmata
 
-class FootMotors(): 
+class TorsoMotors(): 
     """This class manages robot's foot motions."""
 
     def __init__(self):
@@ -10,19 +10,49 @@ class FootMotors():
         self.PWM2 = 11
         self.PWM3 = 10
         self.PWM4 = 9
+        
+        # Hand pins
+        self.SH_R = 18
+        self.AR_R = 19
+        self.SH_L = 20
+        self.AR_L = 21
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
 
-        # Configure the pins
+        # Configure the pins # Foots
         self.M1A = self.board.get_pin(f'd:{self.PWM1}:p')
         self.M1B = self.board.get_pin(f'd:{self.PWM2}:p')
         self.M2A = self.board.get_pin(f'd:{self.PWM3}:p') 
         self.M2B = self.board.get_pin(f'd:{self.PWM4}:p')
+        
+        # Configure pins for # Hands 
+        self.SH_R_C = self.board.get_pin(f'd:{self.SH_R}:s')
+        self.AR_R_C = self.board.get_pin(f'd:{self.AR_R}:s')
+        self.SH_L_C = self.board.get_pin(f'd:{self.SH_L}:s')
+        self.AR_L_C = self.board.get_pin(f'd:{self.AR_L}:s')
 
         # Set the initial motor speeds
         self.speed1 = 255
         self.speed2 = 255
+        
+    def arm_move(self, comp, angle):
+        if comp == "both_hands":
+            print("both hands")
+        elif comp == "both_shoulders":
+            print("both shoulder")
+        elif comp == "shoulder_r":
+            print("right shoulder")
+        elif comp == "shoulder_l":
+            print("left shoulder")
+        elif comp == "arm_r":
+            print("right arm")
+            self.AR_R_C.write(angle)
+            time.sleep(0.1)
+        elif comp == "arm_l":
+            print("left arm")
+        else:
+            pass
         
     def move(self, motor, speed):
         if motor == "live":
