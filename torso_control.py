@@ -1,5 +1,6 @@
 import time
 import pyfirmata
+from pyfirmata import util
 
 class TorsoMotors(): 
     """This class manages robot's foot motions."""
@@ -12,13 +13,15 @@ class TorsoMotors():
         self.PWM4 = 9
         
         # Hand pins
-        self.SH_R = 18
-        self.AR_R = 19
-        self.SH_L = 20
-        self.AR_L = 21
+        self.SH_R = 0
+        self.AR_R = 1
+        self.SH_L = 2
+        self.AR_L = 3
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
+        it = util.Iterator(self.board)
+        it.start()
 
         # Configure the pins # Foots
         self.M1A = self.board.get_pin(f'd:{self.PWM1}:p')
@@ -27,10 +30,10 @@ class TorsoMotors():
         self.M2B = self.board.get_pin(f'd:{self.PWM4}:p')
         
         # Configure pins for # Hands 
-        self.SH_R_C = self.board.get_pin(f'd:{self.SH_R}:s')
-        self.AR_R_C = self.board.get_pin(f'd:{self.AR_R}:s')
-        self.SH_L_C = self.board.get_pin(f'd:{self.SH_L}:s')
-        self.AR_L_C = self.board.get_pin(f'd:{self.AR_L}:s')
+        self.SH_R_C = self.board.get_pin(f'a:{self.SH_R}:o')
+        self.AR_R_C = self.board.get_pin(f'a:{self.AR_R}:o')
+        self.SH_L_C = self.board.get_pin(f'a:{self.SH_L}:o')
+        self.AR_L_C = self.board.get_pin(f'a:{self.AR_L}:o')
 
         # Set the initial motor speeds
         self.speed1 = 255
