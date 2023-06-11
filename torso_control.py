@@ -15,7 +15,7 @@ class TorsoMotors():
         self.PWM4 = 9
         
         # Hand pins
-        self.hs_pins = [31, 17 ,27, 22]
+        self.hs_pins = [31, 11 ,13, 15]
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
@@ -29,7 +29,7 @@ class TorsoMotors():
         self.M2B = self.board.get_pin(f'd:{self.PWM4}:p')
         
         # Configure pins for # Hands 
-        GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BOARD)
         
         # Set up additional pins for servos
         GPIO.setup(self.hs_pins, GPIO.OUT)
@@ -37,20 +37,18 @@ class TorsoMotors():
         self.l_hand = GPIO.PWM(self.hs_pins[0], 50) # Left Hand 6.5-12
         self.l_shoulder = GPIO.PWM(self.hs_pins[1], 50) # Left Shoulder 3-12.5
         self.r_hand = GPIO.PWM(self.hs_pins[2], 50) # Right Hand 2.5-7.5
-        self.r_shoulde = GPIO.PWM(self.hs_pins[3], 50) # Right Shoulder 3-12.5
-            
+        self.r_shoulder = GPIO.PWM(self.hs_pins[3], 50) # Right Shoulder 3-12.5
+         
+        self.l_hand.start(0)
+        self.r_hand.start(0)
+        self.l_shoulder.start(0)
+        self.r_shoulder.start(0)
+        
         # Set the initial motor speeds
         self.speed1 = 255
         self.speed2 = 255
         
     def arm_move(self, comp, angle):
-        try:
-            self.l_hand.start()
-            self.r_hand.start()
-            self.l_shoulder.start()
-            self.r_shoulder.start()
-        except:
-            pass
 
         if comp == "r_shoulder":
             self.r_shoulder.ChangeDutyCycle(angle)
@@ -67,13 +65,6 @@ class TorsoMotors():
         else:
             pass
         
-        try:
-            self.l_hand.stop()
-            self.r_hand.stop()
-            self.l_shoulder.stop()
-            self.r_shoulder.stop()
-        except:
-            pass
         
     def move(self, motor, speed):
         if motor == "live":
