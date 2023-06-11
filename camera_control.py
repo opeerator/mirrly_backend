@@ -1,46 +1,40 @@
+
 from flask import Flask, render_template, Response
 import cv2
 
-
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('video.html')
-
-def generate_frames():
-    camera1 = cv2.VideoCapture(0)  # Change the index to match the webcam's ID
-    camera2 = cv2.VideoCapture(1)  # Change the index to match the webcam's ID
-
+def get_camera(camera_index):
+    camera = cv2.VideoCapture(camera_index)
     while True:
-        success1, frame1 = camera1.read()
-        success2, frame2 = camera2.read()
-
-        if not success1 or not success2:
+        success, frame = camera.read()
+        if success:
+            yield frame
+        else:
             break
+    camera.release()
 
-        # Process the frames if needed
-
-        # Encode the frames to JPEG format
-        ret1, buffer1 = cv2.imencode('.jpg', frame1)
-        ret2, buffer2 = cv2.imencode('.jpg', frame2)
-
-        if not ret1 or not ret2:
-            break
-
-        # Yield the frames as bytes
+def generate_frames(camera):
+    for frame in camera:
+        ret, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + buffer1.tobytes() + b'\r\n\r\n'
-               b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + buffer2.tobytes() + b'\r\n\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-    # Release the camera resources
-    camera1.release()
-    camera2.release()
 
-@app.route('/video_feed')
-def video_feed():
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/video_feed_left_eye')
+def video_feed_0():
+    camera = get_camera(0)
+    return Response(generate_frames(camera),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/video_feed_right_eye')
+def video_feed_1():
+    camera2 = get_camera(2)
+    return Response(generate_frames(camera2),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port='5001')
+    app.run(debug=False, host='0.0.0.0', port=5001)
