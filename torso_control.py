@@ -32,13 +32,12 @@ class TorsoMotors():
         GPIO.setmode(GPIO.BOARD)
         
         # Set up additional pins for servos
-        for pin in self.hs_pins:
-            GPIO.setup(pin, GPIO.OUT)
+        GPIO.setup(self.hs_pins, GPIO.OUT)
             
-        self.l_hand = GPIO.PWM(self.servo_pins[0], 50) # Left Hand 6.5-12
-        self.l_shoulder = GPIO.PWM(self.servo_pins[1], 50) # Left Shoulder 3-12.5
-        self.r_hand = GPIO.PWM(self.servo_pins[2], 50) # Right Hand 2.5-7.5
-        self.r_shoulde = GPIO.PWM(self.servo_pins[3], 50) # Right Shoulder 3-12.5
+        self.l_hand = GPIO.PWM(self.hs_pins[0], 50) # Left Hand 6.5-12
+        self.l_shoulder = GPIO.PWM(self.hs_pins[1], 50) # Left Shoulder 3-12.5
+        self.r_hand = GPIO.PWM(self.hs_pins[2], 50) # Right Hand 2.5-7.5
+        self.r_shoulde = GPIO.PWM(self.hs_pins[3], 50) # Right Shoulder 3-12.5
             
         # Set the initial motor speeds
         self.speed1 = 255
@@ -54,24 +53,24 @@ class TorsoMotors():
             pass
 
         if comp == "both_hands":
-            self.r_hand(angle)
-            self.l_hand(angle)
+            self.r_hand.ChangeDutyCycle(angle)
+            self.l_hand.ChangeDutyCycle(angle)
             print("both hands")
         elif comp == "both_shoulders":
-            self.r_shoulder(angle)
-            self.l_shoulder(angle)
+            self.r_shoulder.ChangeDutyCycle(angle)
+            self.l_shoulder.ChangeDutyCycle(angle)
             print("both shoulder")
         elif comp == "shoulder_r":
-            self.r_shoulder(angle)
+            self.r_shoulder.ChangeDutyCycle(angle)
             print("right shoulder")
         elif comp == "shoulder_l":
-            self.l_shoulder(angle)
+            self.l_shoulder.ChangeDutyCycle(angle)
             print("left shoulder")
         elif comp == "arm_r":
-            self.r_hand(angle)
+            self.r_hand.ChangeDutyCycle(angle)
             print("right arm")
         elif comp == "arm_l":
-            self.l_hand(angle)
+            self.l_hand.ChangeDutyCycle(angle)
             print("left arm")
         else:
             pass
