@@ -29,7 +29,7 @@ class TorsoMotors():
         self.M2B = self.board.get_pin(f'd:{self.PWM4}:p')
         
         # Configure pins for # Hands 
-        GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BCM)
         
         # Set up additional pins for servos
         GPIO.setup(self.hs_pins, GPIO.OUT)
