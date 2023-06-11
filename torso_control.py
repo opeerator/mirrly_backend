@@ -1,6 +1,8 @@
 import time
 import pyfirmata
 from pyfirmata import util
+import RPi.GPIO as GPIO
+
 
 class TorsoMotors(): 
     """This class manages robot's foot motions."""
@@ -13,10 +15,7 @@ class TorsoMotors():
         self.PWM4 = 9
         
         # Hand pins
-        self.SH_R = 0
-        self.AR_R = 1
-        self.SH_L = 2
-        self.AR_L = 3
+        self.hs_pins = [31, 17 ,27, 22]
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
@@ -30,31 +29,59 @@ class TorsoMotors():
         self.M2B = self.board.get_pin(f'd:{self.PWM4}:p')
         
         # Configure pins for # Hands 
-        self.SH_R_C = self.board.get_pin(f'a:{self.SH_R}:o')
-        self.AR_R_C = self.board.get_pin(f'a:{self.AR_R}:o')
-        self.SH_L_C = self.board.get_pin(f'a:{self.SH_L}:o')
-        self.AR_L_C = self.board.get_pin(f'a:{self.AR_L}:o')
-
+        GPIO.setmode(GPIO.BOARD)
+        
+        # Set up additional pins for servos
+        for pin in self.hs_pins:
+            GPIO.setup(pin, GPIO.OUT)
+            
+        self.l_hand = GPIO.PWM(self.servo_pins[0], 50) # Left Hand 6.5-12
+        self.l_shoulder = GPIO.PWM(self.servo_pins[1], 50) # Left Shoulder 3-12.5
+        self.r_hand = GPIO.PWM(self.servo_pins[2], 50) # Right Hand 2.5-7.5
+        self.r_shoulde = GPIO.PWM(self.servo_pins[3], 50) # Right Shoulder 3-12.5
+            
         # Set the initial motor speeds
         self.speed1 = 255
         self.speed2 = 255
         
     def arm_move(self, comp, angle):
+        try:
+            self.l_hand.start()
+            self.r_hand.start()
+            self.l_shoulder.start()
+            self.r_shoulder.start()
+        except:
+            pass
+
         if comp == "both_hands":
+            self.r_hand(angle)
+            self.l_hand(angle)
             print("both hands")
         elif comp == "both_shoulders":
+            self.r_shoulder(angle)
+            self.l_shoulder(angle)
             print("both shoulder")
         elif comp == "shoulder_r":
+            self.r_shoulder(angle)
             print("right shoulder")
         elif comp == "shoulder_l":
+            self.l_shoulder(angle)
             print("left shoulder")
         elif comp == "arm_r":
+            self.r_hand(angle)
             print("right arm")
-            self.AR_R_C.write(angle)
-            time.sleep(0.1)
         elif comp == "arm_l":
+            self.l_hand(angle)
             print("left arm")
         else:
+            pass
+        
+        try:
+            self.l_hand.stop()
+            self.r_hand.stop()
+            self.l_shoulder.stop()
+            self.r_shoulder.stop()
+        except:
             pass
         
     def move(self, motor, speed):
