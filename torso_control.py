@@ -52,18 +52,10 @@ class TorsoMotors():
         except:
             pass
 
-        if comp == "both_hands":
-            self.r_hand.ChangeDutyCycle(angle)
-            self.l_hand.ChangeDutyCycle(angle)
-            print("both hands")
-        elif comp == "both_shoulders":
-            self.r_shoulder.ChangeDutyCycle(angle)
-            self.l_shoulder.ChangeDutyCycle(angle)
-            print("both shoulder")
-        elif comp == "shoulder_r":
+        if comp == "r_shoulder":
             self.r_shoulder.ChangeDutyCycle(angle)
             print("right shoulder")
-        elif comp == "shoulder_l":
+        elif comp == "l_shoulder":
             self.l_shoulder.ChangeDutyCycle(angle)
             print("left shoulder")
         elif comp == "arm_r":
