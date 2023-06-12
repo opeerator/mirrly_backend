@@ -34,6 +34,14 @@ def video_feed_1():
     camera2 = get_camera(2)
     return Response(generate_frames(camera2),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+                    
+@app.route('/left_eye')
+def left_eye_render():
+    return render_template('video.html')
+    
+@app.route('/right_eye')
+def right_eye_render():
+    return render_template('video2.html')
 
 
 if __name__ == '__main__':
