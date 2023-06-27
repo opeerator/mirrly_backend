@@ -8,7 +8,7 @@ head_motors = HeadMotors()
 torso_motors = TorsoMotors()
 current_move = None
 
-if __name__ == "__main__":
+def initial_positions():
 	start_head_positions = head_motors.current_pos('all')
 	
 	# Go to start positions - HEAD
@@ -34,7 +34,10 @@ if __name__ == "__main__":
 	torso_motors.arm_move('l_shoulder', 9) # 3-12.5
 	torso_motors.arm_move('arm_r', 7.5) # 2.5-7.5
 	torso_motors.arm_move('arm_l', 6.5) # 6.5-12
-	
+
+
+if __name__ == "__main__":
+	initial_positions()
 	
 	time.sleep(1)
 

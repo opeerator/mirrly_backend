@@ -15,7 +15,7 @@ class TorsoMotors():
         self.PWM4 = 9
         
         # Hand pins
-        self.hs_pins = [31, 11 ,13, 15]
+        self.hs_pins = [31, 11 ,13, 15] #BOARD scheme
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
@@ -50,6 +50,7 @@ class TorsoMotors():
         
     def arm_move(self, comp, angle):
         if comp == "r_shoulder":
+            print(GPIO.input(11))
             self.r_shoulder.start(0)
             self.r_shoulder.ChangeDutyCycle(angle)
             print("right shoulder")
