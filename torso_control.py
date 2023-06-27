@@ -39,33 +39,52 @@ class TorsoMotors():
         self.r_hand = GPIO.PWM(self.hs_pins[2], 50) # Right Hand 2.5-7.5
         self.r_shoulder = GPIO.PWM(self.hs_pins[3], 50) # Right Shoulder 3-12.5
          
-        self.l_hand.start(0)
-        self.r_hand.start(0)
-        self.l_shoulder.start(0)
-        self.r_shoulder.start(0)
+        # self.l_hand.start(0)
+        # self.r_hand.start(0)
+        # self.l_shoulder.start(0)
+        # self.r_shoulder.start(0)
         
         # Set the initial motor speeds
         self.speed1 = 255
         self.speed2 = 255
         
     def arm_move(self, comp, angle):
-
         if comp == "r_shoulder":
+            self.r_shoulder.start(0)
             self.r_shoulder.ChangeDutyCycle(angle)
             print("right shoulder")
         elif comp == "l_shoulder":
+            self.l_shoulder.start(0)
             self.l_shoulder.ChangeDutyCycle(angle)
             print("left shoulder")
         elif comp == "arm_r":
+            self.r_hand.start(0)
             self.r_hand.ChangeDutyCycle(angle)
             print("right arm")
         elif comp == "arm_l":
+            self.l_hand.start(0)
             self.l_hand.ChangeDutyCycle(angle)
             print("left arm")
         else:
             pass
         
-        
+    def release_hands(self, comp):
+        if comp == "r_shoulder":
+            self.l_shoulder.stop()
+        elif comp == "l_shoulder":
+            self.r_shoulder.stop()
+        elif comp == "arm_r":
+            self.r_hand.stop()
+        elif comp == "arm_l":
+            self.l_hand.stop()
+        elif comp == "all":
+            self.l_hand.stop()
+            self.r_hand.stop()
+            self.l_shoulder.stop()
+            self.r_shoulder.stop()
+        else:
+            pass
+            
     def move(self, motor, speed):
         if motor == "live":
             print(speed)
@@ -184,7 +203,7 @@ class TorsoMotors():
             self.M2B.write(0)   
     def release_motors(self, motor):
         # Release the motors
-        time.sleep(0.1) # Should be considered or it will be not work consistent
+        time.sleep(0.2) # Should be considered or it will be not work consistent
         self.M1A.write(0)
         self.M1B.write(0)
         self.M2A.write(0)

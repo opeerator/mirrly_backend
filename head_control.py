@@ -116,6 +116,10 @@ class HeadMotors(object):
         elif component == "eye_brow":
             dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_POSITION, int(g_pos))
             dxl_comm_result_2, dxl_error_2 = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_4, ADDR_GOAL_POSITION, g_pos)
+        elif component == "eye_brow_l":
+            dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_POSITION, int(g_pos))
+        elif component == "eye_brow_r":
+            dxl_comm_result_2, dxl_error_2 = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_4, ADDR_GOAL_POSITION, g_pos)
         elif component == "eye_self":
             dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_5, ADDR_GOAL_POSITION, int(g_pos))
         else:
