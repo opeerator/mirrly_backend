@@ -22,6 +22,7 @@ from dynamixel_sdk import * # Uses Dynamixel SDK library
 
 MY_DXL = 'XL320'        # [WARNING] Operating Voltage : 7.4V
 ADDR_TORQUE_ENABLE          = 24
+ADDR_GOAL_SPEED             = 34
 ADDR_GOAL_POSITION          = 30
 ADDR_PRESENT_POSITION       = 36        # Default is 37
 DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the CW Angle Limit of product eManual
@@ -95,9 +96,8 @@ class HeadMotors(object):
         # else:
         #     print("Dynamixel has been successfully connected")
             
-    def move(self, component, g_pos):
+    def move(self, component, g_pos, speed=0):
         # A function to move the robot from server commands
-
         # Move Component
         dxl_comm_result = None
         dxl_error = None
@@ -110,17 +110,31 @@ class HeadMotors(object):
         
         self.moving == True
         if component == "head_yaw":
+            # Setting speed
+            self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_1, ADDR_GOAL_SPEED, int(speed))
+            # Setting goal position
             dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_1, ADDR_GOAL_POSITION, int(g_pos))
         elif component == "head_pitch":
+            # Setting speed
+            self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_2, ADDR_GOAL_SPEED, int(speed))
             dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_2, ADDR_GOAL_POSITION, int(g_pos))
         elif component == "eye_brow":
+            # Setting speed
+            self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_SPEED, int(speed))
+            self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_4, ADDR_GOAL_SPEED, int(speed))
             dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_POSITION, int(g_pos))
             dxl_comm_result_2, dxl_error_2 = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_4, ADDR_GOAL_POSITION, g_pos)
         elif component == "eye_brow_l":
+            # Setting speed
+            self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_SPEED, int(speed))
             dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_3, ADDR_GOAL_POSITION, int(g_pos))
         elif component == "eye_brow_r":
+            # Setting speed
+            self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_4, ADDR_GOAL_SPEED, int(speed))
             dxl_comm_result_2, dxl_error_2 = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_4, ADDR_GOAL_POSITION, g_pos)
         elif component == "eye_self":
+            # Setting speed
+            self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_5, ADDR_GOAL_SPEED, int(speed))
             dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, DXL_ID_5, ADDR_GOAL_POSITION, int(g_pos))
         else:
             pass
