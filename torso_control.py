@@ -202,7 +202,7 @@ class TorsoMotors():
             self.M1B.write(0)
             self.M2A.write(0)
             self.M2B.write(0)   
-    def release_motors(self, motor):
+    def release_motors(self):
         # Release the motors
         time.sleep(0.2) # Should be considered or it will be not work consistent
         self.M1A.write(0)

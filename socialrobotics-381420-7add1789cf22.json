@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "socialrobotics-381420",
+  "private_key_id": "7add1789cf227828fc5853d8fe25e3ff754c3db4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDuLlu3lNGVrJ0F\nmhUVJUDrVyK5zp6bbbmSZbGrL96nk1ITf89ymYT/CSL4LqrdpGAqHayqUkk5wP8t\nA+swcNNg1/8xLvlTkt7+MCZubgaTaUzA9WTNWAvy/61SaBxmXDwxFV8FUiHi6KuD\n5N/XLHD2ZaJm6qfPMd+YMsfUDukfNZ0LU0lwFWTWICJroX2eqEpz8dxeX4Ad4yD3\nOWxLROr2jxO5ikku0exF4n21oy2kFOATtinIc9xLnmqanA0UFU1nOZ30z8coijCs\nQ9JZ3PPe+Dy51Kd8ty7eBIaH47a5lhmGApD7TRxCn3SGM/RoFgU9oujsmQ1I8OMg\nVnhW0XZPAgMBAAECggEAAphyZcA96RsjROiGb/S4IzhlB6Wm7dEBc4UfLVs4BRci\nZFWsDYwlul+/nU5o4exveICv8n/eDhPlKU5AdbEtDyzwuiOlvOboqNgeexfrg2y4\n1OYiWJMr4inYxNafRJr0XvaO0rCFRQM9vJILFxMEEh35FJUHChzO2nTnNOTgCSKC\nN0GqaV4OVM9+TDjOog9b3oWLWFWCshtIwRUN/NsyS0eyBx0vKWWWD6XurPOdZsFa\nCObkVq0GtHN+m7nEIcIs10aWZXCnmXJSmKMP1HJEuZVmUL/y8Fic2apBAJZV39qW\ntSvZ2CsEmfHG66U5NxbjJyvRYJ9/li8PRLvpCxT+xQKBgQD6KA8vcUXvRH1TA+mQ\nE/VrQxPRpL03BO6VNhlCaQ9FVi/xwW6Zr8XTdZtcTv1IVVJuSW43ON6QYiPM23At\nUEaOYlN63J5qUAmPdnAHVAka8+A2WPowsGTuC94/nRemXC+j6dbIgQWpA4IrZ7D2\nlhmwJYdidUhpxNC7gsrvTNXCjQKBgQDzvq+URyvPlxNjMVCBJ8RIUnlcy9j/7gHM\nkGJGO+DB9AQX0kY+UD04kqAIK9D2rgTlAPjwvoe3wbzo8cJb18VzSEFc+dMxb4+6\nvDFsNQyaD8qS9eC6riHpBKeuRS/ooJ/pD3RdlxCg9rB7VNOTTie9FhYw0LxH3UUX\n236XUgUTSwKBgQC9cV7mn9LFe0mpd5oGeYbvHxJAPpDovLxtlVWVvHhLGxUd8U3v\n53RaSoNIaa1YfPz69nMYMOIj156jAj+2oUd9hqsPrUnu2wQSeDAo7JQkrDHNFp8K\nBlu5BpXd+PqzCrctW+ZDW6pMr5KBinoyk8OKaTFY99bJ+rnUdx12EesD9QKBgQDX\nwB/2ZhEXjShyEsKpsCODyMz4INARqgEZq2vxsyq9Q1skItJecfPe0Zqp4O70ixB2\nDChOILhNJUYsA2MAnLt/0aNZwyD3j0JwDgjJOSPQcs3iy5WCaIRHmAE8tq0zgopJ\nZ46fEQp9EB8i6/DjYLi4HIbD6t/d1LRF69nf44/uhQKBgQCtYqYS70oZ+VzBsn4c\nLZ4Dr5xl/eZ3MK46rja6MUaViUSnqcttwasJt517BPKXSk1ub25w9FWyfrGJbRxe\n93fsAlLvHLUF6/ifx0Yh4OdyE/Jezsmfq1/5wGbkxdVjlK0797T06FH0sDmAg5s0\njCWIzIEMtag+aqL5nHquZIeU/g==\n-----END PRIVATE KEY-----\n",
+  "client_email": "tts-584@socialrobotics-381420.iam.gserviceaccount.com",
+  "client_id": "108424773700455219676",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/tts-584%40socialrobotics-381420.iam.gserviceaccount.com"
+}
