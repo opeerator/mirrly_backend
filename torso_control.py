@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import time
 import pyfirmata
 from pyfirmata import util
@@ -69,6 +71,21 @@ class TorsoMotors():
         else:
             pass
         
+    def hands_freq(self, comp, n):
+        if comp == "r_shoulder":
+            self.r_shoulder.ChangeFrequency(n)
+        elif comp == "l_shoulder":
+            self.l_shoulder.ChangeFrequency(n)
+        elif comp == "arm_r":
+            self.r_hand.ChangeFrequency(n)
+        elif comp == "arm_l":
+            self.l_hand.ChangeFrequency(n)
+        elif comp == "all":
+            self.l_hand.ChangeFrequency(n)
+            self.r_hand.ChangeFrequency(n)
+            self.l_shoulder.ChangeFrequency(n)
+            self.r_shoulder.ChangeFrequency(n)
+            
     def release_hands(self, comp):
         if comp == "r_shoulder":
             self.l_shoulder.stop()

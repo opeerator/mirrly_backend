@@ -1,7 +1,11 @@
+#!/usr/bin/python3
+
 # sudo apt-get install python3-setuptools
 # sudo python3 setup.py install
-import os
 
+import os
+""" 
+# Makes problem when running it from bash script
 if os.name == 'nt':
     import msvcrt
     def getch():
@@ -17,7 +21,7 @@ else:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
-
+"""
 from dynamixel_sdk import * # Uses Dynamixel SDK library
 
 MY_DXL = 'XL320'        # [WARNING] Operating Voltage : 7.4V
@@ -96,7 +100,7 @@ class HeadMotors(object):
         # else:
         #     print("Dynamixel has been successfully connected")
             
-    def move(self, component, g_pos, speed=0):
+    def move(self, component, g_pos, speed=1000):
         # A function to move the robot from server commands
         # Move Component
         dxl_comm_result = None
