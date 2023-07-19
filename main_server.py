@@ -104,7 +104,7 @@ def play_speech(name):
         subprocess.run(["amixer", "-D", "pulse", "sset", "Master", "300%"], capture_output=True)
         
         if name == "random":
-            probability = 0.01
+            probability = 0.08
             if random.random() < probability:
                 
                 s_sound = random.choice(idle_v)
@@ -224,8 +224,8 @@ def pitch_roll():
     while True:
         probability = 0.07  # Probability of eye movement
         if random.random() < probability:
-            random_value = random.randint(119, 276)
-            random_speed = random.randint(800, 850)
+            random_value = random.randint(119, 200)
+            random_speed = random.randint(900, 950)
             head_motors.move("head_pitch", random_value, random_speed)
         time.sleep(0.5)
 
@@ -557,7 +557,7 @@ random_yaw_roll_process = None
 random_speech_process = None
 
 if __name__ == "__main__":
-    """
+    
     initial_positions()
     time.sleep(1)
     # torso_motors.release_hands("all")
@@ -574,7 +574,7 @@ if __name__ == "__main__":
     torso_motors.hands_freq("arm_r", 50)
     torso_motors.arm_move('arm_l', 12) 
     torso_motors.arm_move('arm_r', 2.5) 
-    head_motors.move("head_pitch", 150, 900)
+    head_motors.move("head_pitch", 110, 1000)
     time.sleep(2)
     torso_motors.arm_move('arm_r', 7.5) 
     time.sleep(0.5)
@@ -612,7 +612,7 @@ if __name__ == "__main__":
     torso_motors.hands_freq("all", 50)
     time.sleep(0.5)
     torso_motors.release_hands("all")
-    """
+    
     socketio.run(app, host='0.0.0.0', allow_unsafe_werkzeug=True)
     
     print("stopped")

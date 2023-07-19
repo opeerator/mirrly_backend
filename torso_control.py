@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 import time
+import math
 import pyfirmata
 from pyfirmata import util
-import RPi.GPIO as GPIO
-
+from gpiozero import Servo
+from gpiozero.pins.pigpio import PiGPIOFactory
 
 class TorsoMotors(): 
     """This class manages robot's foot motions."""
@@ -17,7 +18,9 @@ class TorsoMotors():
         self.PWM4 = 9
         
         # Hand pins
-        self.hs_pins = [31, 11 ,13, 15] #BOARD scheme
+        # self.hs_pins = [31, 11 ,13, 15] #BOARD scheme
+        self.hs_pins = [6, 17 ,27, 22] #BOARD scheme
+        self.s_positions = [0, 0, 0, 0]
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
@@ -31,43 +34,58 @@ class TorsoMotors():
         self.M2B = self.board.get_pin(f'd:{self.PWM4}:p')
         
         # Configure pins for # Hands 
-        GPIO.setmode(GPIO.BOARD)
+        #GPIO.setmode(GPIO.BOARD)
         
         # Set up additional pins for servos
-        GPIO.setup(self.hs_pins, GPIO.OUT)
+        #GPIO.setup(self.hs_pins, GPIO.OUT)
             
-        self.l_hand = GPIO.PWM(self.hs_pins[0], 50) # Left Hand 6.5-12
-        self.l_shoulder = GPIO.PWM(self.hs_pins[1], 50) # Left Shoulder 3-12.5
-        self.r_hand = GPIO.PWM(self.hs_pins[2], 50) # Right Hand 2.5-7.5
-        self.r_shoulder = GPIO.PWM(self.hs_pins[3], 50) # Right Shoulder 3-12.5
-         
+        #self.l_hand = GPIO.PWM(self.hs_pins[0], 50) # Left Hand 6.5-12
+        #self.l_shoulder = GPIO.PWM(self.hs_pins[1], 50) # Left Shoulder 3-12.5
+        #self.r_hand = GPIO.PWM(self.hs_pins[2], 50) # Right Hand 2.5-7.5
+        #self.r_shoulder = GPIO.PWM(self.hs_pins[3], 50) # Right Shoulder 3-12.5
+        
         # self.l_hand.start(0)
         # self.r_hand.start(0)
         # self.l_shoulder.start(0)
         # self.r_shoulder.start(0)
         
+        # Arms Configurations GPIOZero
+        self.factory = PiGPIOFactory() # For Jitter Reduction
+        
+        self.l_hand = Servo(self.hs_pins[0], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+
+        self.l_shoulder = Servo(self.hs_pins[1], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+
+        self.r_hand = Servo(self.hs_pins[2], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+                            
+        self.r_shoulder = Servo(self.hs_pins[3], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+        
         # Set the initial motor speeds
         self.speed1 = 255
         self.speed2 = 255
         
-    def arm_move(self, comp, angle):
+    def arm_motion_smooth(self, servo, initial, angle, speed=0.01):
+        for i in range(initial, angle):
+            servo.value = math.sin(math.radians(i))
+            sleep(speed)
+        
+    def arm_move(self, comp, angle, speed):
         if comp == "r_shoulder":
-            print(GPIO.input(11))
-            self.r_shoulder.start(0)
-            self.r_shoulder.ChangeDutyCycle(angle)
-            print("right shoulder")
+            arm_motion_smooth(self.r_shoulder, self.s_positions[3], angle, speed)
+            self.s_positions[3] = angle
         elif comp == "l_shoulder":
-            self.l_shoulder.start(0)
-            self.l_shoulder.ChangeDutyCycle(angle)
-            print("left shoulder")
+            arm_motion_smooth(self.l_shoulder, self.s_positions[1], angle, speed)
+            self.s_positions[1] = angle
         elif comp == "arm_r":
-            self.r_hand.start(0)
-            self.r_hand.ChangeDutyCycle(angle)
-            print("right arm")
+            arm_motion_smooth(self.r_hand, self.s_positions[2], angle, speed)
+            self.s_positions[2] = angle
         elif comp == "arm_l":
-            self.l_hand.start(0)
-            self.l_hand.ChangeDutyCycle(angle)
-            print("left arm")
+            arm_motion_smooth(self.l_hand, self.s_positions[0], angle, speed)
+            self.s_positions[0] = angle
         else:
             pass
         

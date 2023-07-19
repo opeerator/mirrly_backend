@@ -1,4 +1,4 @@
 #!/bin/bash
 cd /home/mirrly/mirrly_backend
-python3 desktop.py &
-python3 main_server.py &
+sudo python3 desktop.py &
+sudo python3 main_server.py &
