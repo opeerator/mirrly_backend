@@ -2,11 +2,23 @@
 
 import time
 import math
+import subprocess
+import multiprocessing
 import pyfirmata
 from pyfirmata import util
-from gpiozero import Servo
+from gpiozero import Servo, AngularServo
 from gpiozero.pins.pigpio import PiGPIOFactory
 
+def custom_range(start, end, step=1):
+    if start < end:
+        while start <= end:
+            yield start
+            start += step
+    else:
+        while start >= end:
+            yield start
+            start -= step
+            
 class TorsoMotors(): 
     """This class manages robot's foot motions."""
 
@@ -18,9 +30,10 @@ class TorsoMotors():
         self.PWM4 = 9
         
         # Hand pins
-        # self.hs_pins = [31, 11 ,13, 15] #BOARD scheme
+        # self.hs_pins = [31, 11 ,13, 15] #BOARD scheme l_hand, shoulder, r_hand, Shoulder
         self.hs_pins = [6, 17 ,27, 22] #BOARD scheme
         self.s_positions = [0, 0, 0, 0]
+        self.read_positions()
 
         # Connect to the Arduino
         self.board = pyfirmata.Arduino('/dev/ttyACM0')  # Update the port if necessary
@@ -50,44 +63,86 @@ class TorsoMotors():
         # self.r_shoulder.start(0)
         
         # Arms Configurations GPIOZero
+        """
+        # Bash command to be executed
+        bash_command = "sudo pigpiod"
+
+        # Run the Bash command
+        try:
+            subprocess.run(bash_command, shell=True, check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error running the command: {e}")
+        """
+        
         self.factory = PiGPIOFactory() # For Jitter Reduction
+        self.factory2 = PiGPIOFactory() # For Jitter Reduction
+        self.factory3 = PiGPIOFactory() # For Jitter Reduction
+        self.factory4 = PiGPIOFactory() # For Jitter Reduction
+
         
-        self.l_hand = Servo(self.hs_pins[0], min_pulse_width=0.5/1000, 
-                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+        self.l_hand = AngularServo(self.hs_pins[0], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory, initial_angle=self.s_positions[0])
 
-        self.l_shoulder = Servo(self.hs_pins[1], min_pulse_width=0.5/1000, 
-                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+        self.l_shoulder = AngularServo(self.hs_pins[1], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory2, initial_angle=self.s_positions[1])
 
-        self.r_hand = Servo(self.hs_pins[2], min_pulse_width=0.5/1000, 
-                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+        self.r_hand = AngularServo(self.hs_pins[2], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory3, initial_angle=self.s_positions[2])
                             
-        self.r_shoulder = Servo(self.hs_pins[3], min_pulse_width=0.5/1000, 
-                            max_pulse_width=2.5/1000, pin_factory=self.factory)
+        self.r_shoulder = AngularServo(self.hs_pins[3], min_pulse_width=0.5/1000, 
+                            max_pulse_width=2.5/1000, pin_factory=self.factory4,
+                            min_angle= -90, max_angle= 90, initial_angle=self.s_positions[3])
         
+        time.sleep(5)
         # Set the initial motor speeds
         self.speed1 = 255
         self.speed2 = 255
         
+    def read_positions(self, filename="./positions.txt"):
+        with open(filename, "r") as file:
+            for i, line in enumerate(file):
+                self.s_positions[i] = int(line.strip())
+
+    def update_positions(self, new_positions, filename="./positions.txt"):
+        self.s_positions = new_positions
+        print(self.s_positions)
+        with open(filename, "w") as file:
+            for position in self.s_positions:
+                file.write(str(position) + "\n")
+        
     def arm_motion_smooth(self, servo, initial, angle, speed=0.01):
-        for i in range(initial, angle):
-            servo.value = math.sin(math.radians(i))
-            sleep(speed)
+        print("initial: " + str(initial))
+        print("target: " + str(angle))
+        def motion_smooth():
+            for i in custom_range(initial, angle):
+                servo.angle = i
+                time.sleep(speed)
+            time.sleep(1)
+            servo.value = None
+            
+        process = multiprocessing.Process(target=motion_smooth)
+        process.start()
+        # process.join()
         
     def arm_move(self, comp, angle, speed):
+        self.read_positions()
+        print(comp)
         if comp == "r_shoulder":
-            arm_motion_smooth(self.r_shoulder, self.s_positions[3], angle, speed)
+            self.arm_motion_smooth(self.r_shoulder, self.s_positions[3], angle, speed)
             self.s_positions[3] = angle
         elif comp == "l_shoulder":
-            arm_motion_smooth(self.l_shoulder, self.s_positions[1], angle, speed)
+            self.arm_motion_smooth(self.l_shoulder, self.s_positions[1], angle, speed)
             self.s_positions[1] = angle
         elif comp == "arm_r":
-            arm_motion_smooth(self.r_hand, self.s_positions[2], angle, speed)
+            self.arm_motion_smooth(self.r_hand, self.s_positions[2], angle, speed)
             self.s_positions[2] = angle
         elif comp == "arm_l":
-            arm_motion_smooth(self.l_hand, self.s_positions[0], angle, speed)
+            self.arm_motion_smooth(self.l_hand, self.s_positions[0], angle, speed)
             self.s_positions[0] = angle
         else:
             pass
+        self.update_positions(self.s_positions)
+        print("===============================")
         
     def hands_freq(self, comp, n):
         if comp == "r_shoulder":

@@ -153,6 +153,7 @@ def generate_speech(text):
 def initial_positions():
     start_head_positions = head_motors.current_pos('all')
 
+    """
     # Go to start positions - HEAD
     if start_head_positions[0] != int(807):
         head_motors.move("head_yaw", 807, 400)
@@ -169,12 +170,21 @@ def initial_positions():
     if start_head_positions[0] != int(771):
         head_motors.move("eye_self", 771, 500)
 
-    # Go to start positions - HANDS
-    torso_motors.arm_move('r_shoulder', 7)  # 3-12.5
-    torso_motors.arm_move('l_shoulder', 11.5)  # 3-12.5
-    torso_motors.arm_move('arm_r', 7.5)  # 2.5-7.5
-    torso_motors.arm_move('arm_l', 6.5)  # 6.5-12
+    """
+    
 
+    # Go to start positions - HANDS
+    torso_motors.arm_move('r_shoulder', 90, 0.02)  # Plate Top 90, Plate Front 0, Plate Down -90
+    torso_motors.arm_move('l_shoulder', -90, 0.02)  # Plate Top -90, Plate Front 0, Plate Down 90
+    torso_motors.arm_move('arm_r', -10, 0.02)  # -10 (Top) to 90 (Down)
+    torso_motors.arm_move('arm_l', 85, 0.02)  # -20 (Down) to 85 (up)
+
+    """
+    torso_motors.arm_move('r_shoulder', 0, 0.02)  # Plate Top 90, Plate Front 0, Plate Down -90
+    torso_motors.arm_move('l_shoulder', 0, 0.02)  # Plate Top -90, Plate Front 0, Plate Down 90
+    torso_motors.arm_move('arm_r', 90, 0.02)  # -10 (Top) to 90 (Down)
+    torso_motors.arm_move('arm_l', -20, 0.02)  # -20 (Down) to 85 (up)
+    """
 
 def eye_brow_idle():
     while True:
@@ -559,9 +569,6 @@ random_speech_process = None
 if __name__ == "__main__":
     
     initial_positions()
-    time.sleep(1)
-    # torso_motors.release_hands("all")
-    torso_motors.hands_freq("all", 1)
 
     time.sleep(1)
     # Wake up motion
@@ -569,7 +576,9 @@ if __name__ == "__main__":
     head_motors.move("head_pitch", 276, 500)
     head_motors.move("eye_brow_l", 467, 400)
     head_motors.move("eye_brow_r", 643, 400)
+    
     time.sleep(2)
+    """
     torso_motors.hands_freq("arm_l", 50)
     torso_motors.hands_freq("arm_r", 50)
     torso_motors.arm_move('arm_l', 12) 
@@ -661,3 +670,4 @@ if __name__ == "__main__":
         print("random_speech_process terminated.")
     except:
         print("random_speech_process termination failed/passed.")
+    """
