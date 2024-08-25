@@ -227,7 +227,7 @@ if __name__ == "__main__":
         keyboard_thread.daemon = True
         keyboard_thread.start()
         
-        """
+        
         # Wake up motion
         head_motors.move("eye_brow_l", 210, 500)
         head_motors.move("eye_brow_r", 510, 500)
@@ -240,15 +240,10 @@ if __name__ == "__main__":
         torso_motors.arm_move("l_shoulder", 160, 0.001)  # 160 cap front - 60 cap top
         
         
-        """
-        """
         # Wait until the experiment starts
         print("Press s to start...")
         while not start_exp:
             time.sleep(1)
-        """
-        time.sleep(1)
-        """
         
         head_motors.move("eye_brow_l", 370, 400)
         head_motors.move("eye_brow_r", 343, 400)
@@ -293,7 +288,7 @@ if __name__ == "__main__":
         playaudio(audio_m3)
         
         sound_waiter(len(audio_m3))
-        """    
+           
         playaudio(audio_m4)
         sound_waiter(len(audio_m4))
 
