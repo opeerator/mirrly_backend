@@ -212,13 +212,13 @@ if __name__ == "__main__":
     audio_m14 = AudioSegment.from_file('experiment/voice/14.m4a')
     
     # Initialize VLC instance
-    vlc_instance = vlc.Instance('--input-repeat=999999', '--mouse-hide-timeout=0')
+    #vlc_instance = vlc.Instance('--input-repeat=999999', '--mouse-hide-timeout=0')
 
     # Event to control the video playback
-    logo_video_event = threading.Event()
+    #logo_video_event = threading.Event()
     
-    logo_video_thread = threading.Thread(target=control_video_player, args=(vlc_instance, "logo_intro.mp4", logo_video_event))
-    logo_video_thread.start()
+    #logo_video_thread = threading.Thread(target=control_video_player, args=(vlc_instance, "logo_intro.mp4", logo_video_event))
+    #logo_video_thread.start()
         
     try:
         # Start a separate thread to listen for the keyboard inputs
@@ -227,7 +227,7 @@ if __name__ == "__main__":
         keyboard_thread.daemon = True
         keyboard_thread.start()
         
-        """
+        
         # Wake up motion
         head_motors.move("eye_brow_l", 210, 500)
         head_motors.move("eye_brow_r", 510, 500)
@@ -240,15 +240,13 @@ if __name__ == "__main__":
         torso_motors.arm_move("l_shoulder", 160, 0.001)  # 160 cap front - 60 cap top
         
         
-        """
-        """
         # Wait until the experiment starts
         print("Press s to start...")
         while not start_exp:
             time.sleep(1)
-        """
+        
         time.sleep(1)
-        """
+        
         
         head_motors.move("eye_brow_l", 370, 400)
         head_motors.move("eye_brow_r", 343, 400)
@@ -293,7 +291,7 @@ if __name__ == "__main__":
         playaudio(audio_m3)
         
         sound_waiter(len(audio_m3))
-        """    
+         
         playaudio(audio_m4)
         sound_waiter(len(audio_m4))
 
@@ -301,8 +299,6 @@ if __name__ == "__main__":
         pygame.init()
         playaudio(audio_m5)
         
-        logo_video_event.set()
-        time.sleep(4)
         # Start pygame thread to display image
         pygame_thread_obj = threading.Thread(target=pygame_thread, args=("/home/mirrly/mirrly_backend/experiment/images/qrpic.jpg", ))
         pygame_thread_obj.start()
@@ -316,23 +312,13 @@ if __name__ == "__main__":
         # pygame event handling continues in the pygame thread
         pygame_thread_obj.join()
 
-        logo_video_event.clear()  # Allow the logo video to play again
-        logo_video_thread = threading.Thread(target=control_video_player, args=(vlc_instance, "logo_intro.mp4", logo_video_event))
-        logo_video_thread.start()
-
         playaudio(audio_m6)
         sound_waiter(len(audio_m6))
         
-        logo_video_event.set()
-        time.sleep(4)
         vlc_instance2 = vlc.Instance('--mouse-hide-timeout=0')
         video_thread_2 = threading.Thread(target=play_video_in_thread, args=(vlc_instance2, video_m7, True, True, False))
         video_thread_2.start()
         video_thread_2.join()  # Ensure the video plays to completion
-        
-        logo_video_event.clear()  # Allow the logo video to play again
-        logo_video_thread = threading.Thread(target=control_video_player, args=(vlc_instance, "logo_intro.mp4", logo_video_event))
-        logo_video_thread.start()
         
         playaudio(audio_m8_c1)
         sound_waiter(len(audio_m8_c1))
@@ -358,10 +344,6 @@ if __name__ == "__main__":
         video_thread_3.start()
         video_thread_3.join()  # Ensure the video plays to completion
         
-        logo_video_event.clear()  # Allow the logo video to play again
-        logo_video_thread = threading.Thread(target=control_video_player, args=(vlc_instance, "logo_intro.mp4", logo_video_event))
-        logo_video_thread.start()
-        
         #pygame.init()
         paused.set()
         time.sleep(2)
@@ -374,8 +356,6 @@ if __name__ == "__main__":
         # Wait until audio_m5 is done
         sound_waiter(len(audio_m10))
         
-        logo_video_event.set()
-        time.sleep(4)
         # Start pygame thread to display image
         pygame_thread_obj_2 = threading.Thread(target=pygame_thread, args=("/home/mirrly/mirrly_backend/experiment/images/9_qr.jpg",))
         pygame_thread_obj_2.start()
@@ -386,9 +366,6 @@ if __name__ == "__main__":
         # pygame event handling continues in the pygame thread
         pygame_thread_obj_2.join()
         
-        logo_video_event.clear()  # Allow the logo video to play again
-        logo_video_thread = threading.Thread(target=control_video_player, args=(vlc_instance, "logo_intro.mp4", logo_video_event))
-        logo_video_thread.start()
         
         playaudio(audio_m12)
         sound_waiter(len(audio_m12))

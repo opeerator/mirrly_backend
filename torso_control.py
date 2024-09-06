@@ -4,8 +4,8 @@ import time
 import math
 import subprocess
 import multiprocessing
-import pyfirmata
-from pyfirmata import util
+#import pyfirmata
+#from pyfirmata import util
 from gpiozero import Servo, AngularServo, PWMOutputDevice
 from gpiozero.pins.pigpio import PiGPIOFactory
 
