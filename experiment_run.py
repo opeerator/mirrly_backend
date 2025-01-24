@@ -14,6 +14,7 @@ from mode_config import ModeManager
 from head_control import HeadMotors
 from torso_control import TorsoMotors
 
+
 mode_manager = ModeManager()
 head_motors = HeadMotors()
 torso_motors = TorsoMotors()
@@ -21,15 +22,22 @@ start_exp = False #should be false
 audio_playing = False
 nextsection = False
 jazz1 = None
+start_cond = "c3"
 
-def keyboard_listener(paused, eyebrow_process, yaw_process):
+def keyboard_listener(paused, eyebrow_process, yaw_process, rsh_process):
     global start_exp
+    global start_cond
     paused_state = True  # Track the paused state
     while True:
         user_input = input("Enter command (s to start, p to pause/resume, q to quit): ").lower()
-        if user_input == 's':
+        if user_input == 'c3':
             start_exp = True
-            print("Experiment started.")
+            start_cond = 'c3'
+            print("Experiment (Condition 3) started.")
+        if user_input == 'c4':
+            start_exp = True
+            start_cond = 'c4'
+            print("Experiment (Condition 4) started.")
         elif user_input == 'p':
             if paused_state:
                 paused.clear()  # Resume the eyebrow process
@@ -44,6 +52,9 @@ def keyboard_listener(paused, eyebrow_process, yaw_process):
             
             yaw_process.terminate()
             yaw_process.join()
+
+            rsh_process.terminate()
+            rsh_process.join()
             terminate_program()
             break
 
@@ -51,14 +62,14 @@ def eye_brow_idle(paused):
     while True:
         paused.wait()  # Block the loop when the event is set (paused)
         probability = 0.07  # Probability of eyebrow idle movement
-        blink_speed = random.choice([500, 700, 1000])
+        blink_speed = random.choice([800, 1000])
         if random.random() < probability:
             try:
-                head_motors.move("eye_brow_l", 210, blink_speed)
+                head_motors.move("eye_brow_l", 210, blink_speed - 100)
                 time.sleep(0.01)
                 head_motors.move("eye_brow_r", 510, blink_speed)
-                time.sleep(0.2 if blink_speed == 1000 else 0.5 if blink_speed == 700 else 0.7)
-                head_motors.move("eye_brow_l", 370, blink_speed)
+                time.sleep(0.4 if blink_speed == 1000 else 0.8 if blink_speed == 800 else 0.9)
+                head_motors.move("eye_brow_l", 350, blink_speed - 100)
                 time.sleep(0.01)
                 head_motors.move("eye_brow_r", 343, blink_speed)
             except Exception as e:
@@ -188,12 +199,59 @@ def play_video_in_thread(vlc_instance, video_path, no_loop=False, full=False, mu
         player.stop()  # Stop and close the player after playback ends
         
     return player  # Return the player to control it later
+
+def hand_shoulder_idle(paused):
+    while True:
+        paused.wait()  # Block the loop when the event is set (paused)
+        probability = 0.07  # Probability of eyebrow idle movement
+        blink_speed = 0.001
+        movement_number = random.randint(1, 2)
+        if random.random() < probability:
+            try:
+                if movement_number == 1:
+                    torso_motors.arm_move("arm_r", 170, 0.01)  # 170 Down - 90 Up When screw is front
+                    torso_motors.arm_move("arm_l", 80, 0.01)  # 160 Up - 80 Down When screw is front
+                    time.sleep(0.5)
+                    for i in range(4):
+                        torso_motors.arm_move("r_shoulder", 90, 0.01)  # 70 cap front - 160 cap top
+                        torso_motors.arm_move("l_shoulder", 140, 0.01)  # 160 cap front - 60 cap top
+                        time.sleep(0.5)
+                        torso_motors.arm_move("r_shoulder", 70, 0.01)  # 70 cap front - 160 cap top
+                        torso_motors.arm_move("l_shoulder", 160, 0.01)  # 160 cap front - 60 cap top
+                        time.sleep(0.5)
+                elif movement_number == 2:
+                    torso_motors.arm_move("arm_r", 170, 0.01)  # 170 Down - 90 Up When screw is front
+                    torso_motors.arm_move("arm_l", 80, 0.01)  # 160 Up - 80 Down When screw is front
+                    time.sleep(0.5)
+                    for i in range(4):
+                        torso_motors.arm_move("arm_r", 150, 0.01)  # 170 Down - 90 Up When screw is front
+                        torso_motors.arm_move("arm_l", 100, 0.01)  # 160 Up - 80 Down When screw is front
+                        time.sleep(0.5)
+                        torso_motors.arm_move("arm_r", 170, 0.01)  # 170 Down - 90 Up When screw is front
+                        torso_motors.arm_move("arm_l", 80, 0.01)  # 160 Up - 80 Down When screw is front
+                        time.sleep(0.5)
+
+                elif movement_number == 3:
+                    pass
+                elif movement_number == 4:
+                    pass
+                else:
+                    pass
+            except Exception as e:
+                print(f"Error in hand_shoulder movement: {e}")
+                time.sleep(0.01)
+                continue
+        time.sleep(0.5)
+
         
 if __name__ == "__main__":
+    
+    pygame.init()
     paused = multiprocessing.Event()  # Use multiprocessing.Event directly
     paused.set()  # Start in a paused state
     random_brow_process = multiprocessing.Process(target=eye_brow_idle, args=(paused,))
     random_yaw_roll_process = multiprocessing.Process(target=yaw_roll, args=(paused,))
+    random_rsh_process = multiprocessing.Process(target=hand_shoulder_idle, args=(paused,))
     
     audio_m1 = AudioSegment.from_file('experiment/voice/1.m4a')
     audio_m2 = AudioSegment.from_file('experiment/voice/2.m4a')
@@ -212,7 +270,7 @@ if __name__ == "__main__":
     audio_m14 = AudioSegment.from_file('experiment/voice/14.m4a')
     
     # Initialize VLC instance
-    #vlc_instance = vlc.Instance('--input-repeat=999999', '--mouse-hide-timeout=0')
+    vlc_instance = vlc.Instance('--input-repeat=999999', '--mouse-hide-timeout=0')
 
     # Event to control the video playback
     #logo_video_event = threading.Event()
@@ -223,7 +281,7 @@ if __name__ == "__main__":
     try:
         # Start a separate thread to listen for the keyboard inputs
         keyboard_thread = threading.Thread(target=keyboard_listener, args=(paused, random_brow_process,
-                                                                           random_yaw_roll_process))
+                                                                           random_yaw_roll_process, random_rsh_process))
         keyboard_thread.daemon = True
         keyboard_thread.start()
         
@@ -241,14 +299,15 @@ if __name__ == "__main__":
         
         
         # Wait until the experiment starts
-        print("Press s to start...")
+        print("Enter c3 or c4 to start...")
         while not start_exp:
             time.sleep(1)
         
+        print(f"Actual: {start_cond}")
         time.sleep(1)
         
         
-        head_motors.move("eye_brow_l", 370, 400)
+        head_motors.move("eye_brow_l", 350, 400)
         head_motors.move("eye_brow_r", 343, 400)
         head_motors.move("head_pitch", 220, 300)
         head_motors.move("eye_self", 139, 300)  # 139-277
@@ -269,7 +328,7 @@ if __name__ == "__main__":
         random_yaw_roll_process.start()
 
         torso_motors.arm_move("arm_l", 160, 0.01)  # 160 Up - 80 Down When screw is front
-        torso_motors.arm_move("arm_r", 90, 0.01)  # 170 Down - 90 Up When screw is front
+        #torso_motors.arm_move("arm_r", 90, 0.01)  # 170 Down - 90 Up When screw is front
         time.sleep(1)
         playaudio(audio_m2)
         torso_motors.arm_move("l_shoulder", 140, 0.005)  # 160 cap front - 60 cap top
@@ -285,10 +344,11 @@ if __name__ == "__main__":
         torso_motors.arm_move("arm_l", 160, 0.01)  # 160 Up - 80 Down When screw is front
         time.sleep(0.5)
         torso_motors.arm_move("arm_l", 80, 0.005)  # 160 Up - 80 Down When screw is front
-        torso_motors.arm_move("arm_r", 170, 0.005)  # 170 Down - 90 Up When screw is front
+        #torso_motors.arm_move("arm_r", 170, 0.005)  # 170 Down - 90 Up When screw is front
         
         sound_waiter(len(audio_m1) + len(audio_m2) - 2500)
         playaudio(audio_m3)
+        random_rsh_process.start()
         
         sound_waiter(len(audio_m3))
          
@@ -296,7 +356,7 @@ if __name__ == "__main__":
         sound_waiter(len(audio_m4))
 
         
-        pygame.init()
+        #pygame.init()
         playaudio(audio_m5)
         
         # Start pygame thread to display image
@@ -320,33 +380,40 @@ if __name__ == "__main__":
         video_thread_2.start()
         video_thread_2.join()  # Ensure the video plays to completion
         
-        playaudio(audio_m8_c1)
-        sound_waiter(len(audio_m8_c1))
-        
-        paused.clear()
+        if start_cond == 'c3':
+            playaudio(audio_m8_c1)
+            sound_waiter(len(audio_m8_c1))
+            
+            paused.clear()
+            time.sleep(1)
+            
+            head_motors.move("eye_brow_l", 210, 500)
+            head_motors.move("eye_brow_r", 510, 500)
+            head_motors.move("head_pitch", 125, 800)
+            head_motors.move("head_yaw", 180, 400)
+
+            torso_motors.arm_move("arm_r", 170, 0.001)  # 170 Down - 90 Up When screw is front
+            torso_motors.arm_move("arm_l", 80, 0.001)  # 160 Up - 80 Down When screw is front
+            torso_motors.arm_move("r_shoulder", 70, 0.001)  # 70 cap front - 160 cap top -
+            torso_motors.arm_move("l_shoulder", 160, 0.001)  # 160 cap front - 60 cap top
+            
+            #logo_video_event.set()
+            time.sleep(2)
+
+            vlc_instance3 = vlc.Instance('--mouse-hide-timeout=0')
+            video_thread_3 = threading.Thread(target=play_video_in_thread, args=(vlc_instance3, video_m8_c2, True, True, False))
+            video_thread_3.start()
+            video_thread_3.join()  # Ensure the video plays to completion
+
+            head_motors.move("eye_brow_l", 370, 400)
+            head_motors.move("eye_brow_r", 343, 400)
+            head_motors.move("head_pitch", 195, 1000)
+            head_motors.move("eye_self", 190, 300)  # 139-277
+
+            time.sleep(1)
+            #pygame.init()
+            paused.set()
         time.sleep(1)
-        
-        head_motors.move("eye_brow_l", 210, 500)
-        head_motors.move("eye_brow_r", 510, 500)
-        head_motors.move("head_pitch", 125, 800)
-        head_motors.move("head_yaw", 180, 400)
-
-        torso_motors.arm_move("arm_r", 170, 0.001)  # 170 Down - 90 Up When screw is front
-        torso_motors.arm_move("arm_l", 80, 0.001)  # 160 Up - 80 Down When screw is front
-        torso_motors.arm_move("r_shoulder", 70, 0.001)  # 70 cap front - 160 cap top -
-        torso_motors.arm_move("l_shoulder", 160, 0.001)  # 160 cap front - 60 cap top
-        
-        logo_video_event.set()
-        time.sleep(4)
-
-        vlc_instance3 = vlc.Instance('--mouse-hide-timeout=0')
-        video_thread_3 = threading.Thread(target=play_video_in_thread, args=(vlc_instance3, video_m8_c2, True, True, False))
-        video_thread_3.start()
-        video_thread_3.join()  # Ensure the video plays to completion
-        
-        #pygame.init()
-        paused.set()
-        time.sleep(2)
         
         nextsection = False
         playaudio(audio_m9)
@@ -383,6 +450,6 @@ if __name__ == "__main__":
         
     except Exception as e:
         print(f"Exception occurred: {e}")
-        logo_video_event.set()  # Ensure the video is stopped
-        logo_video_thread.join()  # Wait for the video thread to finish
+        #logo_video_event.set()  # Ensure the video is stopped
+        #logo_video_thread.join()  # Wait for the video thread to finish
         terminate_program()
