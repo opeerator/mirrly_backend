@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="./robotwearinghat.jpg" alt="Mirrly wearing a hat" width="400"/>
+  <br><em>Mirrly, the humanoid robot, ready for action</em>
+</p>
+
 # 🧠 Mirrly Backend
 
 This is the backend control system for **Mirrly**, a custom-built humanoid robot designed for child-robot interaction research. The backend runs on a Raspberry Pi 4B and provides real-time control over the robot’s motors, sensors, vision modules, and speech system. It exposes a RESTful API to interface with the companion [Mirrly React Native app](https://github.com/opeerator/mirrly_app) or other client applications.
