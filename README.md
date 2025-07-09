@@ -49,16 +49,7 @@ This is the backend control system for **Mirrly**, a custom-built humanoid robot
 
 ## 📁 Project Structure
 
-mirrly_backend/
-├── motor/         # Central motor control system
-├── vision/        # OpenCV-based vision module
-├── speech/        # Speaker/audio system integration
-├── sensors/       # TOF & ultrasonic sensor handling
-├── modes/         # Robot state manager
-├── api/           # Flask routes
-├── utils/         # Shared utilities and helpers
-├── main.py        # Entry point
-└── requirements.txt  # Dependencies
+<pre> mirrly_backend/ ├── motor/ # Central motor control system ├── vision/ # OpenCV-based vision module ├── speech/ # Speaker/audio system integration ├── sensors/ # TOF & ultrasonic sensor handling ├── modes/ # Robot state manager ├── api/ # Flask routes ├── utils/ # Shared utilities and helpers ├── main.py # Entry point └── requirements.txt # Dependencies </pre>
 
 ## 🚀 Getting Started
 
