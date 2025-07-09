@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./robotwearinghat.jpg" alt="Mirrly wearing a hat" width="400"/>
+  <img src="./robotwearinghat.jpg" alt="Mirrly wearing a hat" width="800"/>
   <br><em>Mirrly, the humanoid robot, ready for action</em>
 </p>
 
