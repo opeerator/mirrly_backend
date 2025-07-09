@@ -82,5 +82,5 @@ This is the backend control system for **Mirrly**, a custom-built humanoid robot
    sudo pigpiod
 4. Run main:
   ```bash
-  python main.py
+   python main.py
 
